@@ -15,7 +15,7 @@
         widthSegments:10,
         heightSegments:10
       }
-    }
+    }    
     // Add Width
     gui.add(world.plane, 'width', 1, 20)
     .onChange(generatePlane)
