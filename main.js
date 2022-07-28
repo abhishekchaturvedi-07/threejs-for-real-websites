@@ -1,4 +1,7 @@
     import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js'
+    // import orbit controls 
+    import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js'
+    console.log(OrbitControls)
     import * as dat from 'dat.gui'
     // console.log(dat)
 
@@ -80,6 +83,14 @@ scene.add(mesh)
 ************************************************************
 */
 
+
+/* Orbit Control */
+new OrbitControls(camera, renderer.domElement)
+
+
+
+
+
 camera.position.z = 5
 
 /* Plane Mesh */
@@ -108,6 +119,11 @@ for(let i =0; i< array.length; i+=3){
 const light = new THREE.DirectionalLight(0xffffff, 1)
 light.position.set(0,0,1 )
 scene.add(light)
+
+// Back Light Position
+const backLight = new THREE.DirectionalLight(0xffffff, 1)
+backLight.position.set(0,0,-1 )
+scene.add(backLight)
 
 
 
