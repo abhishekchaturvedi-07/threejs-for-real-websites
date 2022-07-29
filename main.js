@@ -4,23 +4,25 @@
     console.log(OrbitControls)
     import * as dat from 'dat.gui'
     // console.log(dat)
+    import gsap from 'gsap'
+    console.log(gsap)
 
     /* GUI initialization */
     const gui = new dat.GUI()
     // console.log(gui)
     const world = {
       plane:{
-        width:10,
-        height:10,
-        widthSegments:10,
-        heightSegments:10
+        width:19,
+        height:19,
+        widthSegments:17,
+        heightSegments:17
       }
     }    
     // Add Width
-    gui.add(world.plane, 'width', 1, 20)
+    gui.add(world.plane, 'width', 1, 50)
     .onChange(generatePlane)
     // ADD Height
-    gui.add(world.plane, 'height', 1, 20)
+    gui.add(world.plane, 'height', 1, 50)
     .onChange(generatePlane)
     // Add WidthSegment
     gui.add(world.plane, 'widthSegments', 1, 50)
@@ -43,6 +45,19 @@
 
         array[i+2] = Math.random()
       }
+
+      //set color again on modifying the width / height /ws/ hs
+      const colors=[]
+      for(let i = 0 ; i < planeMesh.geometry.attributes.position.count; i++)
+      {
+        // console.log(i)
+        colors.push(0,0.19,0.4)
+      }
+      // console.log('colors- ',colors)
+
+      planeMesh.geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), 3))
+      // console.log(planeMesh.geometry.attributes)
+
     }
  
  
@@ -99,7 +114,8 @@ new OrbitControls(camera, renderer.domElement)
 camera.position.z = 5
 
 /* Plane Mesh */
-const planeGeometry = new THREE.PlaneGeometry(5, 5, 10, 10)
+// const planeGeometry = new THREE.PlaneGeometry(19, 19, 17, 17)
+const planeGeometry = new THREE.PlaneGeometry(world.plane.width, world.plane.height, world.plane.widthSegments, world.plane.heightSegments)
 const planeMaterial = new THREE.MeshPhongMaterial({
   // color: 0xff0000,
   side: THREE.DoubleSide, 
@@ -129,13 +145,13 @@ for(let i =0; i< array.length; i+=3){
 const colors=[]
 for(let i = 0 ; i < planeMesh.geometry.attributes.position.count; i++)
 {
-  console.log(i)
-  colors.push(1,0,0)
+  // console.log(i)
+  colors.push(0,0.19,0.4)
 }
-console.log('colors- ',colors)
+// console.log('colors- ',colors)
 
 planeMesh.geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), 3))
-console.log(planeMesh.geometry.attributes)
+// console.log(planeMesh.geometry.attributes)
 
 
 /* Add light to the Mesh*/
@@ -181,18 +197,49 @@ function animate(){
     const {color} = intersects[0].object.geometry.attributes
     
     // CHANGE VERTICE 1 COLOR
-    color.setX(intersects[0].face.a, 0)
-    color.setY(intersects[0].face.a, 0)
+    color.setX(intersects[0].face.a, 0.1)
+    color.setY(intersects[0].face.a, 0.5)
     color.setZ(intersects[0].face.a, 1)
     // CHANGE VERTICE 2 COLOR
-    color.setX(intersects[0].face.b, 0)
-    color.setY(intersects[0].face.b, 0)
+    color.setX(intersects[0].face.b, 0.1)
+    color.setY(intersects[0].face.b, 0.5)
     color.setZ(intersects[0].face.b, 1)
     // CHANGE VERTICE 3 COLOR
-    color.setX(intersects[0].face.c, 0)
-    color.setY(intersects[0].face.c, 0)
+    color.setX(intersects[0].face.c, 0.1)
+    color.setY(intersects[0].face.c, 0.5)
     color.setZ(intersects[0].face.c, 1)
 
+    // Animate back to original color using gsap
+    const initialColor={
+      r: 0,
+      g:0.19,
+      b:0.4
+    }
+    const hoverColor={
+      r: 0.1,
+      g:0.5,
+      b:1
+    }
+    gsap.to(hoverColor,{
+      r:initialColor.r,
+      g:initialColor.g,
+      b:initialColor.b,
+      onUpdate: () => {
+        // console.log(hoverColor)
+        // CHANGE VERTICE 1 COLOR
+        color.setX(intersects[0].face.a, hoverColor.r)
+        color.setY(intersects[0].face.a, hoverColor.g)
+        color.setZ(intersects[0].face.a, hoverColor.b)
+        // CHANGE VERTICE 2 COLOR
+        color.setX(intersects[0].face.b, hoverColor.r)
+        color.setY(intersects[0].face.b, hoverColor.g)
+        color.setZ(intersects[0].face.b, hoverColor.b)
+        // CHANGE VERTICE 3 COLOR
+        color.setX(intersects[0].face.c, hoverColor.r)
+        color.setY(intersects[0].face.c, hoverColor.g)
+        color.setZ(intersects[0].face.c, hoverColor.b)
+      }
+    })
 
     //updateon the planemesh
     intersects[0].object.geometry.attributes.color.needsUpdate = true

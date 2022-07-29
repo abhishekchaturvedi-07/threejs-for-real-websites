@@ -10,3 +10,5 @@
 	d- Test for intersects
 	e- Based off intersected face, cahnge surroundings vertex colors
 7)- Add HTML and integrate with JS
+	a)- Change the main color to whatever you want
+	b)- Install GSAP for restoring the color to its prev state
