@@ -49,6 +49,11 @@
   // import * as THREE from 'three';
 
 
+/* IMPORT RAYCASTER - mouse pointer ray*/
+const raycaster = new THREE.Raycaster()
+console.log(raycaster)
+
+
 /* Create Scene, Camera and Render */
   const scene = new THREE.Scene();
   // console.log(scene)
@@ -95,7 +100,11 @@ camera.position.z = 5
 
 /* Plane Mesh */
 const planeGeometry = new THREE.PlaneGeometry(5, 5, 10, 10)
-const planeMaterial = new THREE.MeshPhongMaterial({color: 0xff0000, side: THREE.DoubleSide, flatShading: THREE.FlatShading})
+const planeMaterial = new THREE.MeshPhongMaterial({
+  // color: 0xff0000,
+  side: THREE.DoubleSide, 
+  flatShading: THREE.FlatShading, 
+  vertexColors: true})
 const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial)
 // console.log(planeMesh)
 scene.add(planeMesh)
@@ -114,6 +123,20 @@ for(let i =0; i< array.length; i+=3){
   array[i+2] = Math.random()
 }
 
+/* Add new Attribute in Planemesh geometry for the change of color rays */
+
+//for all attributes
+const colors=[]
+for(let i = 0 ; i < planeMesh.geometry.attributes.position.count; i++)
+{
+  console.log(i)
+  colors.push(1,0,0)
+}
+console.log('colors- ',colors)
+
+planeMesh.geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), 3))
+console.log(planeMesh.geometry.attributes)
+
 
 /* Add light to the Mesh*/
 const light = new THREE.DirectionalLight(0xffffff, 1)
@@ -125,7 +148,10 @@ const backLight = new THREE.DirectionalLight(0xffffff, 1)
 backLight.position.set(0,0,-1 )
 scene.add(backLight)
 
-
+const mouse={
+  x: undefined,
+  y: undefined
+}
 
 /* Animation to the Mesh */
 function animate(){
@@ -137,8 +163,58 @@ function animate(){
   // mesh.rotation.y += 0.01
 
   // planeMesh.rotation.x +=0.01
+
+  // raycaster call
+  raycaster.setFromCamera(mouse, camera)
+  const intersects = raycaster.intersectObject(planeMesh)
+  // console.log(intersects)
+  if(intersects.length > 0){
+    // console.log('intersecting')
+
+    // change intersect face color
+    // ******************************
+    // intersects[0].object.geometry.attributes.color.setX(intersects[0].face.a, 0)
+    // intersects[0].object.geometry.attributes.color.setX(intersects[0].face.b, 0)
+    // intersects[0].object.geometry.attributes.color.setX(intersects[0].face.c, 0)
+
+    //Destructure
+    const {color} = intersects[0].object.geometry.attributes
+    
+    // CHANGE VERTICE 1 COLOR
+    color.setX(intersects[0].face.a, 0)
+    color.setY(intersects[0].face.a, 0)
+    color.setZ(intersects[0].face.a, 1)
+    // CHANGE VERTICE 2 COLOR
+    color.setX(intersects[0].face.b, 0)
+    color.setY(intersects[0].face.b, 0)
+    color.setZ(intersects[0].face.b, 1)
+    // CHANGE VERTICE 3 COLOR
+    color.setX(intersects[0].face.c, 0)
+    color.setY(intersects[0].face.c, 0)
+    color.setZ(intersects[0].face.c, 1)
+
+
+    //updateon the planemesh
+    intersects[0].object.geometry.attributes.color.needsUpdate = true
+  }
 }
 
 
 animate()
+
+
+/* EVENT LISTENERS For Mouse Movement*/
+
+
+
+addEventListener('mousemove', (event) => {
+  mouse.x = (event.clientX / innerWidth) * 2 - 1
+  mouse.y = -(event.clientY/ innerHeight) * 2 + 1
+  // console.log(event.clientX)
+  // console.log(event.clientY)
+  // console.log(mouse)
+})
+
+
+
 

@@ -4,4 +4,9 @@
 4)- Modify according to taste with dat.gui
 5)- Add orbit controls
 6)- Add Hover Effect
+	a- Add mouse movemevent listener 
+	b- Normalize mouse coordinates
+	c- Import raycaster
+	d- Test for intersects
+	e- Based off intersected face, cahnge surroundings vertex colors
 7)- Add HTML and integrate with JS
