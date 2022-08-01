@@ -1,50 +1,85 @@
     import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js'
     // import orbit controls 
     import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js'
-    console.log(OrbitControls)
+    // console.log(OrbitControls)
     import * as dat from 'dat.gui'
     // console.log(dat)
     import gsap from 'gsap'
-    console.log(gsap)
+    // console.log(gsap)
 
     /* GUI initialization */
     const gui = new dat.GUI()
     // console.log(gui)
     const world = {
       plane:{
-        width:19,
-        height:19,
-        widthSegments:17,
-        heightSegments:17
+        width:400,
+        height:400,
+        widthSegments:50,
+        heightSegments:50
       }
     }    
     // Add Width
-    gui.add(world.plane, 'width', 1, 50)
+    gui.add(world.plane, 'width', 1, 500)
     .onChange(generatePlane)
     // ADD Height
-    gui.add(world.plane, 'height', 1, 50)
+    gui.add(world.plane, 'height', 1, 500)
     .onChange(generatePlane)
     // Add WidthSegment
-    gui.add(world.plane, 'widthSegments', 1, 50)
+    gui.add(world.plane, 'widthSegments', 1, 100)
     .onChange(generatePlane)
     // ADD HeightSegment
-    gui.add(world.plane, 'heightSegments', 1, 50)
+    gui.add(world.plane, 'heightSegments', 1, 100)
     .onChange(generatePlane)
     
 
+
+/*************   GENERATE PLANE    **************/
     function generatePlane(){
       planeMesh.geometry.dispose()
-      planeMesh.geometry = new THREE.PlaneGeometry(world.plane.width, world.plane.height, world.plane.widthSegments, world.plane.heightSegments)
-      const {array} = planeMesh.geometry.attributes.position
-      for(let i =0; i< array.length; i+=3){
-        // console.log(i)
-        // console.log(array[i])
-        const x = array[i]
-        const y = array[i+1]
-        const z = array[i+2]
+      planeMesh.geometry = new THREE.PlaneGeometry(
+        world.plane.width,
+        world.plane.height, 
+        world.plane.widthSegments, 
+        world.plane.heightSegments
+      )
 
-        array[i+2] = Math.random()
-      }
+
+
+      // Jaggedness
+          // Vertice Position Randomization
+          // console.log(planeMesh.geometry.attributes.position.array)
+          const {array} = planeMesh.geometry.attributes.position
+
+          const randomValues = []
+          for(let i =0; i< array.length; i++){
+            // console.log(i)
+            // console.log(array[i])
+            if(i%3 ===0)
+            {
+              const x = array[i]
+              const y = array[i+1]
+              const z = array[i+2]
+            
+              array[i] = x + (Math.random() - 0.5) * 3
+              array[i + 1] = y + (Math.random() - 0.5)* 3 
+              array[i+2] = z + (Math.random() - 0.5) * 3
+            }
+            randomValues.push(Math.random() *  Math.PI * 2)
+          }
+
+          // console.log(randomValues)
+
+
+          planeMesh.geometry.attributes.position.randomValues = randomValues
+
+
+          planeMesh.geometry.attributes.position.originalPosition = planeMesh.geometry.attributes.position.array
+          // console.log(planeMesh.geometry.attributes.position)
+
+
+
+
+       
 
       //set color again on modifying the width / height /ws/ hs
       const colors=[]
@@ -55,7 +90,8 @@
       }
       // console.log('colors- ',colors)
 
-      planeMesh.geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), 3))
+      planeMesh.geometry.setAttribute('color', new THREE.BufferAttribute(
+        new Float32Array(colors), 3))
       // console.log(planeMesh.geometry.attributes)
 
     }
@@ -66,7 +102,7 @@
 
 /* IMPORT RAYCASTER - mouse pointer ray*/
 const raycaster = new THREE.Raycaster()
-console.log(raycaster)
+// console.log(raycaster)
 
 
 /* Create Scene, Camera and Render */
@@ -110,8 +146,8 @@ new OrbitControls(camera, renderer.domElement)
 
 
 
-
-camera.position.z = 5
+//Setting camera position from plane
+camera.position.z = 50
 
 /* Plane Mesh */
 // const planeGeometry = new THREE.PlaneGeometry(19, 19, 17, 17)
@@ -126,37 +162,32 @@ const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial)
 scene.add(planeMesh)
 
 
-// Jaggedness
-console.log(planeMesh.geometry.attributes.position.array)
-const {array} = planeMesh.geometry.attributes.position
-for(let i =0; i< array.length; i+=3){
-  // console.log(i)
-  // console.log(array[i])
-  const x = array[i]
-  const y = array[i+1]
-  const z = array[i+2]
 
-  array[i+2] = Math.random()
-}
 
 /* Add new Attribute in Planemesh geometry for the change of color rays */
 
-//for all attributes
-const colors=[]
-for(let i = 0 ; i < planeMesh.geometry.attributes.position.count; i++)
-{
-  // console.log(i)
-  colors.push(0,0.19,0.4)
-}
-// console.log('colors- ',colors)
+// MOVED TO generatePlane FUNCTION 
 
-planeMesh.geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), 3))
-// console.log(planeMesh.geometry.attributes)
+// //for all attributes
+// // Color attribute addition
+// const colors=[]
+// for(let i = 0 ; i < planeMesh.geometry.attributes.position.count; i++)
+// {
+//   // console.log(i)
+//   colors.push(0,0.19,0.4)
+// }
+// // console.log('colors- ',colors)
 
+// planeMesh.geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), 3))
+// // console.log(planeMesh.geometry.attributes)
+
+
+// /After create Mash generate Plan which has all the randomization in it 
+generatePlane()
 
 /* Add light to the Mesh*/
 const light = new THREE.DirectionalLight(0xffffff, 1)
-light.position.set(0,0,1 )
+light.position.set(0,-1,1 )
 scene.add(light)
 
 // Back Light Position
@@ -164,12 +195,50 @@ const backLight = new THREE.DirectionalLight(0xffffff, 1)
 backLight.position.set(0,0,-1 )
 scene.add(backLight)
 
+// ADD STAR LIGHT GAZES GALAXIES 
+
+const starGeometry = new THREE.BufferGeometry()
+const starMataerial = new THREE.PointsMaterial({
+  color:0xffffff
+})
+
+// console.log(starGeometry)
+// console.log(starMataerial)
+
+
+const starVerticies =[]
+for(let i=0; i<10000; i++)
+{
+  const x = (Math.random()- 0.5 ) * 2000
+  const y = (Math.random()- 0.5 ) * 2000
+  const z = (Math.random()- 0.5 ) * 2000
+  // console.log(x,y,z)
+  starVerticies.push(x,y,z)
+}
+// console.log(starVerticies)
+
+starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(
+  starVerticies, 3))
+
+
+const stars = new THREE.Points(starGeometry, starMataerial)
+scene.add(stars)
+
+
+
+
+
+
 const mouse={
   x: undefined,
   y: undefined
 }
 
-/* Animation to the Mesh */
+
+let frame = 0
+
+
+/***************** Animation to the Mesh ******************/
 function animate(){
   requestAnimationFrame(animate)
 
@@ -182,6 +251,26 @@ function animate(){
 
   // raycaster call
   raycaster.setFromCamera(mouse, camera)
+
+  // add small member of frame every time
+  frame += 0.01
+
+
+  const {array, originalPosition, randomValues} = planeMesh.geometry.attributes.position
+
+  // ANIMATE ORIGINAL POSITION VERTICE
+  for (var i = 0; i < array.length; i+=3) {
+    array[i] = originalPosition[i] + Math.cos(frame + randomValues[i] ) *0.01
+    array[i + 1] = originalPosition[i + 1] + Math.sin(frame + randomValues[i + 1] ) *0.001
+    // if(i ===0){
+    //   // console.log(array[i])
+    // }
+  }
+
+  planeMesh.geometry.attributes.position.needsUpdate = true    
+
+
+
   const intersects = raycaster.intersectObject(planeMesh)
   // console.log(intersects)
   if(intersects.length > 0){
@@ -244,6 +333,12 @@ function animate(){
     //updateon the planemesh
     intersects[0].object.geometry.attributes.color.needsUpdate = true
   }
+
+
+  //MOVE STARS 
+
+  stars.rotation.x += 0.0005
+  // stars.rotation.y += 0.0005
 }
 
 
