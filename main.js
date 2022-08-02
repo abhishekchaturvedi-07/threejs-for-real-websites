@@ -358,5 +358,59 @@ addEventListener('mousemove', (event) => {
 })
 
 
+/************ Add animation to Text /************/
+
+gsap.to('#name-text', {
+  opacity: 1,
+  duration: 1.5,
+  y:0,
+  ease:'expo'
+})
+ 
+gsap.to('#home-par-text', {
+  opacity: 1,
+  duration: 1.5,
+  delay:0.3,
+  y:0,
+  ease:'expo'
+})
+
+gsap.to('#home-link-text', {
+  opacity: 1,
+  duration: 1.5,
+  delay:0.6,
+  y:0,
+  ease:'expo'
+})
+
+
+
+
+/************* CAMERA TRANSITIONS MOVEMENT *****************/
+
+document.querySelector('#home-link-text').addEventListener('click',
+(e)=>{
+        e.preventDefault()
+        gsap.to('#container',{
+          opacity:0,
+        })
+      gsap.to(camera.position,{
+        z:25,
+        ease:'power3.inOut',
+        duration:2
+      })
+      gsap.to(camera.rotation,{
+        x:1.57,
+        ease:'power3.inOut',
+        duration:2
+      })
+      gsap.to(camera.position,{
+        y:1000,
+        ease:'power3.in',
+        duration:1,
+        delay:2
+      })
+    }
+)
 
 

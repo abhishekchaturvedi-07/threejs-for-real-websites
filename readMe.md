@@ -13,3 +13,7 @@
 7)- Add HTML and integrate with JS
 	a)- Change the main color to whatever you want
 	b)- Install GSAP for restoring the color to its prev state
+8)- Add Star Galaxy
+9)- Add Animation to text on load using GSAP properties
+10)- Camera Movement TRANSITIONS
+11)- 
