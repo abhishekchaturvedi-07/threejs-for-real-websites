@@ -408,7 +408,11 @@ document.querySelector('#home-link-text').addEventListener('click',
         y:1000,
         ease:'power3.in',
         duration:1,
-        delay:2
+        delay:2,
+        //redirect to external site
+        onComplete: () => {
+          window.location = 'http://abhishekchaturvedi.com'
+        }
       })
     }
 )

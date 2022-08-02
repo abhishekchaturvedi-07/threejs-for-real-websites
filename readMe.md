@@ -17,3 +17,4 @@
 9)- Add Animation to text on load using GSAP properties
 10)- Camera Movement TRANSITIONS
 11)- Scene Responsiveness and Browser Resizing
+12)- Link to external site once animation completes
