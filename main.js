@@ -414,3 +414,11 @@ document.querySelector('#home-link-text').addEventListener('click',
 )
 
 
+
+/************* RESPONSIVE AND RESIZE and Maintain Aspect Ratio *****************/
+
+addEventListener('resize',()=>{
+  camera.aspect = innerWidth / innerHeight
+  camera.updateProjectionMatrix()
+  renderer.setSize(innerWidth,innerHeight)
+})

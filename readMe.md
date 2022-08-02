@@ -16,4 +16,4 @@
 8)- Add Star Galaxy
 9)- Add Animation to text on load using GSAP properties
 10)- Camera Movement TRANSITIONS
-11)- 
+11)- Scene Responsiveness and Browser Resizing
